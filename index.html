@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>La Comelona VIP 🎄</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Playfair+Display:ital,wght@0,600;1,600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <style>
+        :root {
+            --primary: #8a1c1c; /* Rojo Vino */
+            --accent: #d4af37; /* Dorado */
+            --dark: #1a1a1a;
+            --glass: rgba(255, 255, 255, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.5);
+            --shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            background: radial-gradient(circle at top right, #4a0e0e, #1a0505);
+            font-family: 'DM Sans', sans-serif;
+            color: var(--dark);
+            min-height: 100vh;
+            overflow-x: hidden;
+            padding-bottom: 100px;
+        }
+
+        /* --- LOADING SCREEN --- */
+        #loader {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--primary);
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            transition: opacity 0.5s ease;
+        }
+        .loader-spinner {
+            width: 50px; height: 50px;
+            border: 5px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: var(--accent);
+            animation: spin 1s ease-in-out infinite;
+            margin-bottom: 20px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* --- HEADER ANIMADO --- */
+        header {
+            text-align: center;
+            padding: 4rem 1rem 2rem;
+            color: white;
+            position: relative;
+        }
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            background: linear-gradient(to right, #fff, #d4af37);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+            animation: float 6s ease-in-out infinite;
+        }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+
+        /* --- TARJETAS GLASSMORPHISM --- */
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+
+        .card {
+            background: var(--glass);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 1.5rem;
+            margin-bottom: 2.5rem;
+            box-shadow: var(--shadow);
+            transform-style: preserve-3d;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.27);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card:active {
+            transform: scale(0.98);
+        }
+
+        /* --- IMAGEN EXPANDIBLE --- */
+        .img-wrapper {
+            position: relative;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            cursor: pointer;
+        }
+
+        .img-wrapper::after {
+            content: '🔍 Ver foto';
+            position: absolute;
+            bottom: 10px; right: 10px;
+            background: rgba(0,0,0,0.6);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .img-wrapper:hover::after { opacity: 1; }
+
+        .dish-img {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+
+        /* --- CONTENIDO --- */
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .badge-time {
+            background: var(--dark);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 50px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .dish-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            color: var(--primary);
+            line-height: 1.1;
+            margin-bottom: 0.5rem;
+        }
+
+        .dish-desc {
+            font-size: 0.95rem;
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        /* --- INTERACCIONES --- */
+        .actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-love {
+            flex: 0 0 50px;
+            height: 50px;
+            border-radius: 14px;
+            border: 2px solid #eee;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: #ccc;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .btn-love.loved {
+            color: #e31b23;
+            border-color: #ffe0e0;
+            background: #fff0f0;
+            animation: pulse-heart 0.3s;
+        }
+
+        @keyframes pulse-heart { 0% { transform: scale(1); } 50% { transform: scale(1.3); } 100% { transform: scale(1); } }
+
+        .btn-order {
+            flex: 1;
+            background: linear-gradient(135deg, #25D366, #128C7E);
+            color: white;
+            text-decoration: none;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            gap: 10px;
+            box-shadow: 0 4px 15px rgba(37, 211, 102, 0.3);
+            transition: transform 0.2s;
+        }
+        
+        .btn-order:active { transform: scale(0.95); }
+
+        /* --- MODAL (Lightbox) --- */
+        #lightbox {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 10000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+        #lightbox.active { opacity: 1; pointer-events: all; }
+        #lightbox img {
+            max-width: 95%;
+            max-height: 80%;
+            border-radius: 8px;
+            box-shadow: 0 0 50px rgba(255,255,255,0.1);
+            transform: scale(0.9);
+            transition: transform 0.3s;
+        }
+        #lightbox.active img { transform: scale(1); }
+        .close-lb {
+            position: absolute;
+            top: 30px; right: 30px;
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+        }
+
+        /* --- NIEVE EN EL FONDO --- */
+        .snow-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: -1; }
+        
+        /* Indicador activo */
+        .active-ring {
+            position: absolute;
+            top: -10px; right: -10px;
+            background: var(--accent);
+            color: var(--dark);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.8rem;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            z-index: 10;
+            animation: popIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+        @keyframes popIn { 0% { transform: scale(0); } 100% { transform: scale(1); } }
+
+    </style>
+</head>
+<body>
+
+    <div id="loader">
+        <div class="loader-spinner"></div>
+        <p id="loader-text">Calentando los buñuelos...</p>
+    </div>
+
+    <div id="lightbox" onclick="closeLightbox()">
+        <span class="close-lb">&times;</span>
+        <img id="lightbox-img" src="" alt="Zoom Plato">
+    </div>
+
+    <header>
+        <div class="logo">La Comelona 🎄</div>
+        <p style="opacity: 0.8;">Menú interactivo de la Familia</p>
+    </header>
+
+    <div class="container">
+
+        <div class="card" id="card-desayuno">
+            <div class="img-wrapper" onclick="openLightbox('https://pawwi.co/wp-content/uploads/2025/12/IMG_8435.jpg')">
+                <img src="https://pawwi.co/wp-content/uploads/2025/12/IMG_8435.jpg" class="dish-img" alt="Arepa">
+            </div>
+            <div class="card-header">
+                <span class="badge-time"><i class="far fa-clock"></i> 7AM - 9AM</span>
+            </div>
+            <h2 class="dish-title">Arepapá con Carne</h2>
+            <p class="dish-desc">
+                Carne molida con arepa, más paisa que un "¡Eh ave maría!". Desayuno de campeones para aguantar los chismes de la tía.
+            </p>
+            <div class="actions">
+                <button class="btn-love" onclick="toggleLove(this)">
+                    <i class="far fa-heart"></i>
+                </button>
+                <a href="#" onclick="order('desayuno', 'Buenas! Una Arepapá bien cargada por favor! 🍳')" class="btn-order">
+                    <i class="fab fa-whatsapp"></i> Pedir
+                </a>
+            </div>
+        </div>
+
+        <div class="card" id="card-almuerzo">
+            <div class="img-wrapper" onclick="openLightbox('https://pawwi.co/wp-content/uploads/2025/12/borrar2.webp')">
+                <img src="https://pawwi.co/wp-content/uploads/2025/12/borrar2.webp" class="dish-img" alt="Medallones">
+            </div>
+            <div class="card-header">
+                <span class="badge-time"><i class="far fa-clock"></i> 12PM - 3PM</span>
+            </div>
+            <h2 class="dish-title">Medallo-nes de Cerdo</h2>
+            <p class="dish-desc">
+                Con puré de papa. Este plato es tan bueno que debería ser ilegal. Ojo con el "mal de puerco" después de comer.
+            </p>
+            <div class="actions">
+                <button class="btn-love" onclick="toggleLove(this)">
+                    <i class="far fa-heart"></i>
+                </button>
+                <a href="#" onclick="order('almuerzo', 'Hola! Mande esos medallones que tengo un filo tenaz! 🐷')" class="btn-order">
+                    <i class="fab fa-whatsapp"></i> Pedir
+                </a>
+            </div>
+        </div>
+
+        <div class="card" id="card-cena">
+            <div class="img-wrapper" onclick="openLightbox('https://pawwi.co/wp-content/uploads/2025/12/Trianculitos-de-pollo.jpg')">
+                <img src="https://pawwi.co/wp-content/uploads/2025/12/Trianculitos-de-pollo.jpg" class="dish-img" alt="TrianCulitos">
+            </div>
+            <div class="card-header">
+                <span class="badge-time"><i class="far fa-clock"></i> 6PM - 8PM</span>
+            </div>
+            <h2 class="dish-title">TrianCulitos de Pollo</h2>
+            <p class="dish-desc">
+                La receta legendaria de Doña Florecita 🌸. Tortilla + Pollo + Salsa Secreta. Patrimonio inmaterial de esta familia.
+            </p>
+            <div class="actions">
+                <button class="btn-love" onclick="toggleLove(this)">
+                    <i class="far fa-heart"></i>
+                </button>
+                <a href="#" onclick="order('cena', 'Doña Florecita! Mande los triangulitos antes que se acaben! 🍗')" class="btn-order">
+                    <i class="fab fa-whatsapp"></i> Pedir
+                </a>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // 1. Loading Screen divertido
+        window.addEventListener('load', () => {
+            const phrases = ["Fritando empanadas...", "Enfriando la pola...", "Escondiendo los regalos..."];
+            document.getElementById('loader-text').innerText = phrases[Math.floor(Math.random() * phrases.length)];
+            
+            setTimeout(() => {
+                document.getElementById('loader').style.opacity = '0';
+                setTimeout(() => {
+                    document.getElementById('loader').style.display = 'none';
+                    checkTime(); // Revisar hora al cargar
+                }, 500);
+            }, 2000);
+        });
+
+        // 2. Lógica de Hora Automática (Smart UI)
+        function checkTime() {
+            const hour = new Date().getHours();
+            let activeId = '';
+            
+            if (hour >= 6 && hour < 11) activeId = 'card-desayuno';
+            else if (hour >= 11 && hour < 16) activeId = 'card-almuerzo';
+            else if (hour >= 16 && hour < 22) activeId = 'card-cena';
+
+            if(activeId) {
+                const card = document.getElementById(activeId);
+                // Crear badge de "Abierto"
+                const badge = document.createElement('div');
+                badge.className = 'active-ring';
+                badge.innerHTML = '⚡ ABIERTO YA';
+                card.appendChild(badge);
+                
+                // Scroll suave
+                card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                
+                // Resaltar borde dorado
+                card.style.border = '2px solid var(--accent)';
+            }
+        }
+
+        // 3. Interacción "Me Gusta" con animación
+        function toggleLove(btn) {
+            btn.classList.toggle('loved');
+            const icon = btn.querySelector('i');
+            
+            if(btn.classList.contains('loved')) {
+                icon.classList.remove('far');
+                icon.classList.add('fas');
+                
+                // Mini confeti en el botón
+                confetti({
+                    particleCount: 15,
+                    spread: 40,
+                    origin: { y: btn.getBoundingClientRect().top / window.innerHeight, x: btn.getBoundingClientRect().left / window.innerWidth },
+                    colors: ['#e31b23', '#ffafb3']
+                });
+            } else {
+                icon.classList.remove('fas');
+                icon.classList.add('far');
+            }
+        }
+
+        // 4. Lightbox (Ver foto grande)
+        function openLightbox(src) {
+            const lb = document.getElementById('lightbox');
+            const img = document.getElementById('lightbox-img');
+            img.src = src;
+            lb.classList.add('active');
+        }
+
+        function closeLightbox() {
+            document.getElementById('lightbox').classList.remove('active');
+        }
+
+        // 5. Ordenar con Confeti Explosivo
+        function order(type, msg) {
+            // Explosión de confeti
+            var duration = 2 * 1000;
+            var end = Date.now() + duration;
+
+            confetti({
+                particleCount: 100,
+                spread: 70,
+                origin: { y: 0.6 },
+                colors: ['#25D366', '#d4af37', '#ffffff']
+            });
+
+            // Esperar 800ms para que vean el confeti y luego abrir WhatsApp
+            setTimeout(() => {
+                const phone = '573223660175';
+                const url = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
+                window.location.href = url;
+            }, 800);
+        }
+    </script>
+</body>
+</html>
