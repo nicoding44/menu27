@@ -14,6 +14,7 @@
         :root {
             --primary: #8a1c1c; /* Rojo Vino */
             --accent: #d4af37; /* Dorado */
+            --success: #25D366; /* Verde WhatsApp */
             --dark: #1a1a1a;
             --glass: rgba(255, 255, 255, 0.85);
             --glass-border: rgba(255, 255, 255, 0.5);
@@ -54,7 +55,7 @@
         }
         @keyframes spin { to { transform: rotate(360deg); } }
 
-        /* --- HEADER ANIMADO --- */
+        /* --- HEADER --- */
         header {
             text-align: center;
             padding: 4rem 1rem 2rem;
@@ -89,14 +90,32 @@
             margin-bottom: 2.5rem;
             box-shadow: var(--shadow);
             transform-style: preserve-3d;
-            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.27);
+            transition: all 0.4s ease;
             position: relative;
             overflow: hidden;
         }
 
-        .card:active {
+        /* --- ESTADOS DE LA TARJETA (NUEVO UX) --- */
+        
+        /* Estado Cerrado */
+        .card.closed-state {
+            opacity: 0.75;
+            filter: grayscale(40%);
             transform: scale(0.98);
         }
+
+        .card.closed-state .btn-order {
+            background: #888 !important; /* Gris */
+            box-shadow: none !important;
+            pointer-events: none; /* No se puede dar click */
+        }
+        
+        /* Estado Abierto */
+        .card.open-state {
+            border: 2px solid var(--accent);
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.4);
+        }
+
 
         /* --- IMAGEN EXPANDIBLE --- */
         .img-wrapper {
@@ -106,22 +125,6 @@
             box-shadow: 0 10px 20px rgba(0,0,0,0.1);
             cursor: pointer;
         }
-
-        .img-wrapper::after {
-            content: '🔍 Ver foto';
-            position: absolute;
-            bottom: 10px; right: 10px;
-            background: rgba(0,0,0,0.6);
-            color: white;
-            padding: 5px 10px;
-            border-radius: 20px;
-            font-size: 0.7rem;
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-        
-        .img-wrapper:hover::after { opacity: 1; }
-
         .dish-img {
             width: 100%;
             height: 220px;
@@ -129,7 +132,7 @@
             transition: transform 0.5s;
         }
 
-        /* --- CONTENIDO --- */
+        /* --- CONTENIDO HEADER CARD --- */
         .card-header {
             display: flex;
             justify-content: space-between;
@@ -138,16 +141,30 @@
             margin-bottom: 0.5rem;
         }
 
-        .badge-time {
-            background: var(--dark);
-            color: white;
-            padding: 5px 12px;
-            border-radius: 50px;
-            font-size: 0.7rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+        .time-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
+
+        .badge-time {
+            font-size: 0.75rem;
+            font-weight: 700;
+            opacity: 0.7;
+        }
+
+        /* Badges de estado (Abierto/Cerrado) */
+        .status-badge {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .status-badge.open { background: var(--accent); color: var(--dark); }
+        .status-badge.closed { background: #555; color: #ccc; }
+
 
         .dish-title {
             font-family: 'Playfair Display', serif;
@@ -165,102 +182,51 @@
         }
 
         /* --- INTERACCIONES --- */
-        .actions {
-            display: flex;
-            gap: 10px;
-        }
+        .actions { display: flex; gap: 10px; }
 
         .btn-love {
-            flex: 0 0 50px;
-            height: 50px;
-            border-radius: 14px;
-            border: 2px solid #eee;
-            background: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
-            color: #ccc;
-            cursor: pointer;
-            transition: all 0.2s;
-            position: relative;
+            flex: 0 0 50px; height: 50px;
+            border-radius: 14px; border: 2px solid #eee; background: white;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.2rem; color: #ccc; cursor: pointer; transition: all 0.2s;
         }
-
         .btn-love.loved {
-            color: #e31b23;
-            border-color: #ffe0e0;
-            background: #fff0f0;
+            color: #e31b23; border-color: #ffe0e0; background: #fff0f0;
             animation: pulse-heart 0.3s;
         }
-
         @keyframes pulse-heart { 0% { transform: scale(1); } 50% { transform: scale(1.3); } 100% { transform: scale(1); } }
 
         .btn-order {
             flex: 1;
-            background: linear-gradient(135deg, #25D366, #128C7E);
-            color: white;
-            text-decoration: none;
+            background: linear-gradient(135deg, var(--success), #128C7E);
+            color: white; text-decoration: none;
             border-radius: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            gap: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700; gap: 8px;
             box-shadow: 0 4px 15px rgba(37, 211, 102, 0.3);
-            transition: transform 0.2s;
+            transition: all 0.3s;
         }
         
         .btn-order:active { transform: scale(0.95); }
 
         /* --- MODAL (Lightbox) --- */
         #lightbox {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.9);
-            z-index: 10000;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9); z-index: 10000;
+            display: flex; justify-content: center; align-items: center;
+            opacity: 0; pointer-events: none; transition: opacity 0.3s;
         }
         #lightbox.active { opacity: 1; pointer-events: all; }
         #lightbox img {
-            max-width: 95%;
-            max-height: 80%;
-            border-radius: 8px;
+            max-width: 95%; max-height: 80%; border-radius: 8px;
             box-shadow: 0 0 50px rgba(255,255,255,0.1);
-            transform: scale(0.9);
-            transition: transform 0.3s;
+            transform: scale(0.9); transition: transform 0.3s;
         }
         #lightbox.active img { transform: scale(1); }
         .close-lb {
-            position: absolute;
-            top: 30px; right: 30px;
-            color: white;
-            font-size: 2rem;
-            cursor: pointer;
+            position: absolute; top: 30px; right: 30px;
+            color: white; font-size: 2rem; cursor: pointer;
         }
-
-        /* --- NIEVE EN EL FONDO --- */
-        .snow-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: -1; }
-        
-        /* Indicador activo */
-        .active-ring {
-            position: absolute;
-            top: -10px; right: -10px;
-            background: var(--accent);
-            color: var(--dark);
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-weight: bold;
-            font-size: 0.8rem;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-            z-index: 10;
-            animation: popIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-        }
-        @keyframes popIn { 0% { transform: scale(0); } 100% { transform: scale(1); } }
 
     </style>
 </head>
@@ -283,11 +249,12 @@
 
     <div class="container">
 
-        <div class="card" id="card-desayuno">
-            <div class="img-wrapper" onclick="openLightbox('https://pawwi.co/wp-content/uploads/2025/12/IMG_8435.jpg')">
-                <img src="https://pawwi.co/wp-content/uploads/2025/12/IMG_8435.jpg" class="dish-img" alt="Arepa">
+        <div class="card meal-card" id="card-desayuno" data-start="6" data-end="11">
+            <div class="img-wrapper" onclick="openLightbox('https://pawwi.co/wp-content/uploads/2025/12/2D8344E0-9AD9-4A6C-A7CA-E17E4EF25592.png')">
+                <img src="https://pawwi.co/wp-content/uploads/2025/12/2D8344E0-9AD9-4A6C-A7CA-E17E4EF25592.png" class="dish-img" alt="Arepa">
             </div>
             <div class="card-header">
+                 <span class="status-badge dynamic-status"></span>
                 <span class="badge-time"><i class="far fa-clock"></i> 7AM - 9AM</span>
             </div>
             <h2 class="dish-title">Arepapá con Carne</h2>
@@ -298,17 +265,18 @@
                 <button class="btn-love" onclick="toggleLove(this)">
                     <i class="far fa-heart"></i>
                 </button>
-                <a href="#" onclick="order('desayuno', 'Buenas! Una Arepapá bien cargada por favor! 🍳')" class="btn-order">
-                    <i class="fab fa-whatsapp"></i> Pedir
+                <a href="#" onclick="order('desayuno', 'Buenas! Una Arepapá bien cargada por favor! 🍳')" class="btn-order dynamic-btn">
+                    <i class="fab fa-whatsapp"></i> <span class="btn-text">Pedir</span>
                 </a>
             </div>
         </div>
 
-        <div class="card" id="card-almuerzo">
+        <div class="card meal-card" id="card-almuerzo" data-start="11" data-end="16">
             <div class="img-wrapper" onclick="openLightbox('https://pawwi.co/wp-content/uploads/2025/12/borrar2.webp')">
                 <img src="https://pawwi.co/wp-content/uploads/2025/12/borrar2.webp" class="dish-img" alt="Medallones">
             </div>
             <div class="card-header">
+                 <span class="status-badge dynamic-status"></span>
                 <span class="badge-time"><i class="far fa-clock"></i> 12PM - 3PM</span>
             </div>
             <h2 class="dish-title">Medallo-nes de Cerdo</h2>
@@ -319,17 +287,18 @@
                 <button class="btn-love" onclick="toggleLove(this)">
                     <i class="far fa-heart"></i>
                 </button>
-                <a href="#" onclick="order('almuerzo', 'Hola! Mande esos medallones que tengo un filo tenaz! 🐷')" class="btn-order">
-                    <i class="fab fa-whatsapp"></i> Pedir
+                 <a href="#" onclick="order('almuerzo', 'Hola! Mande esos medallones que tengo un filo tenaz! 🐷')" class="btn-order dynamic-btn">
+                    <i class="fab fa-whatsapp"></i> <span class="btn-text">Pedir</span>
                 </a>
             </div>
         </div>
 
-        <div class="card" id="card-cena">
+        <div class="card meal-card" id="card-cena" data-start="16" data-end="22">
             <div class="img-wrapper" onclick="openLightbox('https://pawwi.co/wp-content/uploads/2025/12/Trianculitos-de-pollo.jpg')">
                 <img src="https://pawwi.co/wp-content/uploads/2025/12/Trianculitos-de-pollo.jpg" class="dish-img" alt="TrianCulitos">
             </div>
             <div class="card-header">
+                 <span class="status-badge dynamic-status"></span>
                 <span class="badge-time"><i class="far fa-clock"></i> 6PM - 8PM</span>
             </div>
             <h2 class="dish-title">TrianCulitos de Pollo</h2>
@@ -340,8 +309,8 @@
                 <button class="btn-love" onclick="toggleLove(this)">
                     <i class="far fa-heart"></i>
                 </button>
-                <a href="#" onclick="order('cena', 'Doña Florecita! Mande los triangulitos antes que se acaben! 🍗')" class="btn-order">
-                    <i class="fab fa-whatsapp"></i> Pedir
+                 <a href="#" onclick="order('cena', 'Doña Florecita! Mande los triangulitos antes que se acaben! 🍗')" class="btn-order dynamic-btn">
+                    <i class="fab fa-whatsapp"></i> <span class="btn-text">Pedir</span>
                 </a>
             </div>
         </div>
@@ -349,7 +318,7 @@
     </div>
 
     <script>
-        // 1. Loading Screen divertido
+        // 1. Loading Screen
         window.addEventListener('load', () => {
             const phrases = ["Fritando empanadas...", "Enfriando la pola...", "Escondiendo los regalos..."];
             document.getElementById('loader-text').innerText = phrases[Math.floor(Math.random() * phrases.length)];
@@ -358,88 +327,96 @@
                 document.getElementById('loader').style.opacity = '0';
                 setTimeout(() => {
                     document.getElementById('loader').style.display = 'none';
-                    checkTime(); // Revisar hora al cargar
+                    // EJECUTAMOS LA NUEVA LÓGICA DE HORARIOS
+                    checkRestaurantStatus(); 
                 }, 500);
             }, 2000);
         });
 
-        // 2. Lógica de Hora Automática (Smart UI)
-        function checkTime() {
-            const hour = new Date().getHours();
-            let activeId = '';
-            
-            if (hour >= 6 && hour < 11) activeId = 'card-desayuno';
-            else if (hour >= 11 && hour < 16) activeId = 'card-almuerzo';
-            else if (hour >= 16 && hour < 22) activeId = 'card-cena';
+        // 2. NUEVA LÓGICA CENTRALIZADA DE HORARIOS (UX SENIOR)
+        function checkRestaurantStatus() {
+            const now = new Date();
+            const currentHour = now.getHours();
+            // Para pruebas: Descomenta la siguiente línea y pon la hora que quieras probar (ej: 13 para almuerzo)
+            // const currentHour = 13; 
 
-            if(activeId) {
-                const card = document.getElementById(activeId);
-                // Crear badge de "Abierto"
-                const badge = document.createElement('div');
-                badge.className = 'active-ring';
-                badge.innerHTML = '⚡ ABIERTO YA';
-                card.appendChild(badge);
+            const cards = document.querySelectorAll('.meal-card');
+            let firstOpenCard = null;
+
+            cards.forEach(card => {
+                // Leemos los horarios definidos en el HTML (data-start y data-end)
+                const startHour = parseInt(card.dataset.start);
+                const endHour = parseInt(card.dataset.end);
                 
-                // Scroll suave
-                card.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                
-                // Resaltar borde dorado
-                card.style.border = '2px solid var(--accent)';
+                const statusBadge = card.querySelector('.dynamic-status');
+                const orderBtn = card.querySelector('.dynamic-btn');
+                const btnText = orderBtn.querySelector('.btn-text');
+
+                if (currentHour >= startHour && currentHour < endHour) {
+                    // --- ESTÁ ABIERTO ---
+                    card.classList.add('open-state');
+                    card.classList.remove('closed-state');
+                    
+                    statusBadge.innerText = "⚡ ABIERTO";
+                    statusBadge.classList.add('open');
+                    statusBadge.classList.remove('closed');
+                    
+                    btnText.innerText = "Pedir por WhatsApp";
+                    
+                    // Guardamos el primero que encontremos abierto para hacer scroll luego
+                    if (!firstOpenCard) firstOpenCard = card;
+
+                } else {
+                    // --- ESTÁ CERRADO ---
+                    card.classList.add('closed-state');
+                    card.classList.remove('open-state');
+
+                    statusBadge.innerText = "🔒 CERRADO";
+                    statusBadge.classList.add('closed');
+                    statusBadge.classList.remove('open');
+
+                    btnText.innerText = "No disponible ahora";
+                }
+            });
+
+            // Scroll automático suave al primer plato abierto
+            if (firstOpenCard) {
+                setTimeout(() => {
+                   firstOpenCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }, 500);
             }
         }
 
-        // 3. Interacción "Me Gusta" con animación
+        // 3. Interacción "Me Gusta"
         function toggleLove(btn) {
             btn.classList.toggle('loved');
             const icon = btn.querySelector('i');
             
             if(btn.classList.contains('loved')) {
-                icon.classList.remove('far');
-                icon.classList.add('fas');
-                
-                // Mini confeti en el botón
+                icon.classList.remove('far'); icon.classList.add('fas');
                 confetti({
-                    particleCount: 15,
-                    spread: 40,
-                    origin: { y: btn.getBoundingClientRect().top / window.innerHeight, x: btn.getBoundingClientRect().left / window.innerWidth },
-                    colors: ['#e31b23', '#ffafb3']
+                    particleCount: 15, spread: 40, colors: ['#e31b23', '#ffafb3'],
+                    origin: { y: btn.getBoundingClientRect().top / window.innerHeight, x: btn.getBoundingClientRect().left / window.innerWidth }
                 });
             } else {
-                icon.classList.remove('fas');
-                icon.classList.add('far');
+                icon.classList.remove('fas'); icon.classList.add('far');
             }
         }
 
-        // 4. Lightbox (Ver foto grande)
+        // 4. Lightbox
         function openLightbox(src) {
-            const lb = document.getElementById('lightbox');
-            const img = document.getElementById('lightbox-img');
-            img.src = src;
-            lb.classList.add('active');
+            document.getElementById('lightbox-img').src = src;
+            document.getElementById('lightbox').classList.add('active');
         }
-
         function closeLightbox() {
             document.getElementById('lightbox').classList.remove('active');
         }
 
-        // 5. Ordenar con Confeti Explosivo
+        // 5. Ordenar con Confeti
         function order(type, msg) {
-            // Explosión de confeti
-            var duration = 2 * 1000;
-            var end = Date.now() + duration;
-
-            confetti({
-                particleCount: 100,
-                spread: 70,
-                origin: { y: 0.6 },
-                colors: ['#25D366', '#d4af37', '#ffffff']
-            });
-
-            // Esperar 800ms para que vean el confeti y luego abrir WhatsApp
+            confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 }, colors: ['#25D366', '#d4af37', '#ffffff'] });
             setTimeout(() => {
-                const phone = '573223660175';
-                const url = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
-                window.location.href = url;
+                window.location.href = `https://wa.me/573223660175?text=${encodeURIComponent(msg)}`;
             }, 800);
         }
     </script>
