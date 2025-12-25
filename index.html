@@ -12,11 +12,11 @@
 
     <style>
         :root {
-            --primary: #8a1c1c; /* Rojo Vino */
-            --accent: #d4af37; /* Dorado */
-            --success: #25D366; /* Verde WhatsApp */
+            --primary: #8a1c1c; 
+            --accent: #d4af37; 
+            --success: #25D366; 
             --dark: #1a1a1a;
-            --glass: rgba(255, 255, 255, 0.85);
+            --glass: rgba(255, 255, 255, 0.90);
             --glass-border: rgba(255, 255, 255, 0.5);
             --shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
         }
@@ -32,284 +32,157 @@
             padding-bottom: 100px;
         }
 
-        /* --- LOADING SCREEN --- */
+        /* LOADING */
         #loader {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: var(--primary);
-            z-index: 9999;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            color: white;
-            transition: opacity 0.5s ease;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--primary); z-index: 9999;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            color: white; transition: opacity 0.5s ease;
         }
         .loader-spinner {
-            width: 50px; height: 50px;
-            border: 5px solid rgba(255,255,255,0.3);
-            border-radius: 50%;
-            border-top-color: var(--accent);
-            animation: spin 1s ease-in-out infinite;
-            margin-bottom: 20px;
+            width: 50px; height: 50px; border: 5px solid rgba(255,255,255,0.3);
+            border-radius: 50%; border-top-color: var(--accent);
+            animation: spin 1s ease-in-out infinite; margin-bottom: 20px;
         }
         @keyframes spin { to { transform: rotate(360deg); } }
 
-        /* --- HEADER --- */
-        header {
-            text-align: center;
-            padding: 4rem 1rem 2rem;
-            color: white;
-            position: relative;
-        }
+        /* HEADER */
+        header { text-align: center; padding: 4rem 1rem 2rem; color: white; }
         .logo {
-            font-family: 'Playfair Display', serif;
-            font-size: 3rem;
+            font-family: 'Playfair Display', serif; font-size: 3rem;
             background: linear-gradient(to right, #fff, #d4af37);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 0.5rem;
-            animation: float 6s ease-in-out infinite;
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem; animation: float 6s ease-in-out infinite;
         }
         @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
 
-        /* --- TARJETAS GLASSMORPHISM --- */
-        .container {
-            max-width: 500px;
-            margin: 0 auto;
-            padding: 0 1.5rem;
-        }
+        .container { max-width: 500px; margin: 0 auto; padding: 0 1.5rem; }
 
         .card {
             background: var(--glass);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid var(--glass-border);
-            border-radius: 24px;
-            padding: 1.5rem;
-            margin-bottom: 2.5rem;
-            box-shadow: var(--shadow);
-            transform-style: preserve-3d;
-            transition: all 0.4s ease;
-            position: relative;
-            overflow: hidden;
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border); border-radius: 24px;
+            padding: 1.5rem; margin-bottom: 2.5rem;
+            box-shadow: var(--shadow); transition: all 0.4s ease;
+            position: relative; overflow: hidden;
         }
 
-        /* --- ESTADOS DE LA TARJETA (NUEVO UX) --- */
+        /* ESTADOS */
+        .card.closed-state { opacity: 0.7; filter: grayscale(100%); transform: scale(0.98); }
+        .card.closed-state .btn-order { background: #999 !important; pointer-events: none; box-shadow: none; }
         
-        /* Estado Cerrado */
-        .card.closed-state {
-            opacity: 0.75;
-            filter: grayscale(40%);
-            transform: scale(0.98);
-        }
+        .card.soon-state { opacity: 1; filter: grayscale(0%); border: 2px dashed var(--accent); }
+        .card.soon-state .btn-order { background: var(--accent); pointer-events: none; }
 
-        .card.closed-state .btn-order {
-            background: #888 !important; /* Gris */
-            box-shadow: none !important;
-            pointer-events: none; /* No se puede dar click */
-        }
-        
-        /* Estado Abierto */
-        .card.open-state {
-            border: 2px solid var(--accent);
-            box-shadow: 0 0 20px rgba(212, 175, 55, 0.4);
-        }
+        .card.open-state { border: 2px solid var(--success); box-shadow: 0 0 25px rgba(37, 211, 102, 0.4); transform: scale(1.02); }
 
-
-        /* --- IMAGEN EXPANDIBLE --- */
+        /* IMAGEN */
         .img-wrapper {
-            position: relative;
-            border-radius: 16px;
-            overflow: hidden;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-            cursor: pointer;
+            position: relative; border-radius: 16px; overflow: hidden;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1); cursor: pointer;
         }
-        .dish-img {
-            width: 100%;
-            height: 220px;
-            object-fit: cover;
-            transition: transform 0.5s;
-        }
+        .dish-img { width: 100%; height: 220px; object-fit: cover; }
 
-        /* --- CONTENIDO HEADER CARD --- */
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 1rem;
-            margin-bottom: 0.5rem;
-        }
+        .card-header { display: flex; justify-content: space-between; align-items: center; margin: 1rem 0 0.5rem; }
+        .badge-time { font-size: 0.75rem; font-weight: 700; opacity: 0.7; }
 
-        .time-info {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .badge-time {
-            font-size: 0.75rem;
-            font-weight: 700;
-            opacity: 0.7;
-        }
-
-        /* Badges de estado (Abierto/Cerrado) */
-        .status-badge {
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 0.7rem;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        .status-badge.open { background: var(--accent); color: var(--dark); }
+        .status-badge { padding: 4px 10px; border-radius: 20px; font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; }
+        .status-badge.open { background: var(--success); color: white; }
         .status-badge.closed { background: #555; color: #ccc; }
+        .status-badge.soon { background: var(--accent); color: var(--dark); }
 
+        .dish-title { font-family: 'Playfair Display', serif; font-size: 1.8rem; color: var(--primary); line-height: 1.1; margin-bottom: 0.5rem; }
+        .dish-desc { font-size: 0.95rem; color: #555; line-height: 1.6; margin-bottom: 1.5rem; }
 
-        .dish-title {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.8rem;
-            color: var(--primary);
-            line-height: 1.1;
-            margin-bottom: 0.5rem;
-        }
-
-        .dish-desc {
-            font-size: 0.95rem;
-            color: #555;
-            line-height: 1.6;
-            margin-bottom: 1.5rem;
-        }
-
-        /* --- INTERACCIONES --- */
         .actions { display: flex; gap: 10px; }
-
         .btn-love {
-            flex: 0 0 50px; height: 50px;
-            border-radius: 14px; border: 2px solid #eee; background: white;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 1.2rem; color: #ccc; cursor: pointer; transition: all 0.2s;
+            flex: 0 0 50px; height: 50px; border-radius: 14px; border: 2px solid #eee; background: white;
+            display: flex; align-items: center; justify-content: center; font-size: 1.2rem; color: #ccc; cursor: pointer; transition: all 0.2s;
         }
-        .btn-love.loved {
-            color: #e31b23; border-color: #ffe0e0; background: #fff0f0;
-            animation: pulse-heart 0.3s;
-        }
+        .btn-love.loved { color: #e31b23; border-color: #ffe0e0; background: #fff0f0; animation: pulse-heart 0.3s; }
         @keyframes pulse-heart { 0% { transform: scale(1); } 50% { transform: scale(1.3); } 100% { transform: scale(1); } }
 
         .btn-order {
-            flex: 1;
-            background: linear-gradient(135deg, var(--success), #128C7E);
-            color: white; text-decoration: none;
-            border-radius: 14px;
-            display: flex; align-items: center; justify-content: center;
-            font-weight: 700; gap: 8px;
-            box-shadow: 0 4px 15px rgba(37, 211, 102, 0.3);
-            transition: all 0.3s;
+            flex: 1; background: linear-gradient(135deg, var(--success), #128C7E);
+            color: white; text-decoration: none; border-radius: 14px;
+            display: flex; align-items: center; justify-content: center; font-weight: 700; gap: 8px;
+            box-shadow: 0 4px 15px rgba(37, 211, 102, 0.3); transition: all 0.3s;
         }
-        
-        .btn-order:active { transform: scale(0.95); }
 
-        /* --- MODAL (Lightbox) --- */
+        /* MODAL */
         #lightbox {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.9); z-index: 10000;
-            display: flex; justify-content: center; align-items: center;
-            opacity: 0; pointer-events: none; transition: opacity 0.3s;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 10000;
+            display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: opacity 0.3s;
         }
         #lightbox.active { opacity: 1; pointer-events: all; }
-        #lightbox img {
-            max-width: 95%; max-height: 80%; border-radius: 8px;
-            box-shadow: 0 0 50px rgba(255,255,255,0.1);
-            transform: scale(0.9); transition: transform 0.3s;
-        }
+        #lightbox img { max-width: 95%; max-height: 80%; border-radius: 8px; transform: scale(0.9); transition: transform 0.3s; }
         #lightbox.active img { transform: scale(1); }
-        .close-lb {
-            position: absolute; top: 30px; right: 30px;
-            color: white; font-size: 2rem; cursor: pointer;
-        }
+        .close-lb { position: absolute; top: 30px; right: 30px; color: white; font-size: 2rem; cursor: pointer; }
 
     </style>
 </head>
 <body>
 
-    <div id="loader">
-        <div class="loader-spinner"></div>
-        <p id="loader-text">Calentando los buñuelos...</p>
-    </div>
+    <div id="loader"><div class="loader-spinner"></div><p id="loader-text">Calentando los buñuelos...</p></div>
 
-    <div id="lightbox" onclick="closeLightbox()">
-        <span class="close-lb">&times;</span>
-        <img id="lightbox-img" src="" alt="Zoom Plato">
-    </div>
+    <div id="lightbox" onclick="closeLightbox()"><span class="close-lb">&times;</span><img id="lightbox-img" src="" alt="Zoom Plato"></div>
 
     <header>
         <div class="logo">La Comelona 🎄</div>
-        <p style="opacity: 0.8;">Menú interactivo de la Familia</p>
+        <p style="opacity: 0.8;">Menú Navideño</p>
     </header>
 
     <div class="container">
 
-        <div class="card meal-card" id="card-desayuno" data-start="6" data-end="11">
+        <div class="card meal-card" id="card-desayuno" data-start="7" data-end="9">
             <div class="img-wrapper" onclick="openLightbox('https://pawwi.co/wp-content/uploads/2025/12/2D8344E0-9AD9-4A6C-A7CA-E17E4EF25592.png')">
                 <img src="https://pawwi.co/wp-content/uploads/2025/12/2D8344E0-9AD9-4A6C-A7CA-E17E4EF25592.png" class="dish-img" alt="Arepa">
             </div>
             <div class="card-header">
-                 <span class="status-badge dynamic-status"></span>
-                <span class="badge-time"><i class="far fa-clock"></i> 7AM - 9AM</span>
+                <span class="status-badge dynamic-status"></span>
+                <span class="badge-time"><i class="far fa-clock"></i> 7:00 AM - 9:00 AM</span>
             </div>
             <h2 class="dish-title">Arepapá con Carne</h2>
-            <p class="dish-desc">
-                Carne molida con arepa, más paisa que un "¡Eh ave maría!". Desayuno de campeones para aguantar los chismes de la tía.
-            </p>
+            <p class="dish-desc">Carne molida con arepa, más paisa que un "¡Eh ave maría!". Desayuno de campeones.</p>
             <div class="actions">
-                <button class="btn-love" onclick="toggleLove(this)">
-                    <i class="far fa-heart"></i>
-                </button>
+                <button class="btn-love" onclick="toggleLove(this)"><i class="far fa-heart"></i></button>
                 <a href="#" onclick="order('desayuno', 'Buenas! Una Arepapá bien cargada por favor! 🍳')" class="btn-order dynamic-btn">
                     <i class="fab fa-whatsapp"></i> <span class="btn-text">Pedir</span>
                 </a>
             </div>
         </div>
 
-        <div class="card meal-card" id="card-almuerzo" data-start="11" data-end="16">
+        <div class="card meal-card" id="card-almuerzo" data-start="12" data-end="15">
             <div class="img-wrapper" onclick="openLightbox('https://pawwi.co/wp-content/uploads/2025/12/borrar2.webp')">
                 <img src="https://pawwi.co/wp-content/uploads/2025/12/borrar2.webp" class="dish-img" alt="Medallones">
             </div>
             <div class="card-header">
-                 <span class="status-badge dynamic-status"></span>
-                <span class="badge-time"><i class="far fa-clock"></i> 12PM - 3PM</span>
+                <span class="status-badge dynamic-status"></span>
+                <span class="badge-time"><i class="far fa-clock"></i> 12:00 PM - 3:00 PM</span>
             </div>
             <h2 class="dish-title">Medallo-nes de Cerdo</h2>
-            <p class="dish-desc">
-                Con puré de papa. Este plato es tan bueno que debería ser ilegal. Ojo con el "mal de puerco" después de comer.
-            </p>
+            <p class="dish-desc">Con puré de papa. Ojo con el "mal de puerco" después de comer.</p>
             <div class="actions">
-                <button class="btn-love" onclick="toggleLove(this)">
-                    <i class="far fa-heart"></i>
-                </button>
-                 <a href="#" onclick="order('almuerzo', 'Hola! Mande esos medallones que tengo un filo tenaz! 🐷')" class="btn-order dynamic-btn">
+                <button class="btn-love" onclick="toggleLove(this)"><i class="far fa-heart"></i></button>
+                <a href="#" onclick="order('almuerzo', 'Hola! Mande esos medallones que tengo un filo tenaz! 🐷')" class="btn-order dynamic-btn">
                     <i class="fab fa-whatsapp"></i> <span class="btn-text">Pedir</span>
                 </a>
             </div>
         </div>
 
-        <div class="card meal-card" id="card-cena" data-start="16" data-end="22">
+        <div class="card meal-card" id="card-cena" data-start="18" data-end="20">
             <div class="img-wrapper" onclick="openLightbox('https://pawwi.co/wp-content/uploads/2025/12/Trianculitos-de-pollo.jpg')">
                 <img src="https://pawwi.co/wp-content/uploads/2025/12/Trianculitos-de-pollo.jpg" class="dish-img" alt="TrianCulitos">
             </div>
             <div class="card-header">
-                 <span class="status-badge dynamic-status"></span>
-                <span class="badge-time"><i class="far fa-clock"></i> 6PM - 8PM</span>
+                <span class="status-badge dynamic-status"></span>
+                <span class="badge-time"><i class="far fa-clock"></i> 6:00 PM - 8:00 PM</span>
             </div>
             <h2 class="dish-title">TrianCulitos de Pollo</h2>
-            <p class="dish-desc">
-                La receta legendaria de Doña Florecita 🌸. Tortilla + Pollo + Salsa Secreta. Patrimonio inmaterial de esta familia.
-            </p>
+            <p class="dish-desc">La receta legendaria de Doña Florecita 🌸. Tortilla + Pollo + Salsa Secreta.</p>
             <div class="actions">
-                <button class="btn-love" onclick="toggleLove(this)">
-                    <i class="far fa-heart"></i>
-                </button>
-                 <a href="#" onclick="order('cena', 'Doña Florecita! Mande los triangulitos antes que se acaben! 🍗')" class="btn-order dynamic-btn">
+                <button class="btn-love" onclick="toggleLove(this)"><i class="far fa-heart"></i></button>
+                <a href="#" onclick="order('cena', 'Doña Florecita! Mande los triangulitos antes que se acaben! 🍗')" class="btn-order dynamic-btn">
                     <i class="fab fa-whatsapp"></i> <span class="btn-text">Pedir</span>
                 </a>
             </div>
@@ -318,106 +191,77 @@
     </div>
 
     <script>
-        // 1. Loading Screen
         window.addEventListener('load', () => {
             const phrases = ["Fritando empanadas...", "Enfriando la pola...", "Escondiendo los regalos..."];
             document.getElementById('loader-text').innerText = phrases[Math.floor(Math.random() * phrases.length)];
-            
             setTimeout(() => {
                 document.getElementById('loader').style.opacity = '0';
-                setTimeout(() => {
-                    document.getElementById('loader').style.display = 'none';
-                    // EJECUTAMOS LA NUEVA LÓGICA DE HORARIOS
-                    checkRestaurantStatus(); 
-                }, 500);
+                setTimeout(() => { document.getElementById('loader').style.display = 'none'; checkRestaurantStatus(); }, 500);
             }, 2000);
         });
 
-        // 2. NUEVA LÓGICA CENTRALIZADA DE HORARIOS (UX SENIOR)
         function checkRestaurantStatus() {
             const now = new Date();
             const currentHour = now.getHours();
-            // Para pruebas: Descomenta la siguiente línea y pon la hora que quieras probar (ej: 13 para almuerzo)
-            // const currentHour = 13; 
+            // const currentHour = 17; // PRUEBA: Descomenta esto para simular las 5PM
 
             const cards = document.querySelectorAll('.meal-card');
-            let firstOpenCard = null;
 
             cards.forEach(card => {
-                // Leemos los horarios definidos en el HTML (data-start y data-end)
                 const startHour = parseInt(card.dataset.start);
                 const endHour = parseInt(card.dataset.end);
                 
                 const statusBadge = card.querySelector('.dynamic-status');
                 const orderBtn = card.querySelector('.dynamic-btn');
                 const btnText = orderBtn.querySelector('.btn-text');
+                
+                // Limpiar clases previas
+                card.classList.remove('open-state', 'closed-state', 'soon-state');
+                statusBadge.classList.remove('open', 'closed', 'soon');
 
                 if (currentHour >= startHour && currentHour < endHour) {
-                    // --- ESTÁ ABIERTO ---
+                    // --- ABIERTO ---
                     card.classList.add('open-state');
-                    card.classList.remove('closed-state');
-                    
-                    statusBadge.innerText = "⚡ ABIERTO";
+                    statusBadge.innerText = "⚡ ABIERTO YA";
                     statusBadge.classList.add('open');
-                    statusBadge.classList.remove('closed');
-                    
                     btnText.innerText = "Pedir por WhatsApp";
+                    orderBtn.style.pointerEvents = "auto";
                     
-                    // Guardamos el primero que encontremos abierto para hacer scroll luego
-                    if (!firstOpenCard) firstOpenCard = card;
+                    setTimeout(() => { card.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 500);
 
+                } else if (currentHour === (startHour - 1)) {
+                    // --- ABRE PRONTO (Falta 1 hora o menos) ---
+                    card.classList.add('soon-state');
+                    statusBadge.innerText = "⏳ ABRE A LAS " + (startHour > 12 ? startHour - 12 : startHour);
+                    statusBadge.classList.add('soon');
+                    btnText.innerText = "Abre pronto...";
+                    orderBtn.style.background = "#d4af37"; // Dorado
+                    
                 } else {
-                    // --- ESTÁ CERRADO ---
+                    // --- CERRADO ---
                     card.classList.add('closed-state');
-                    card.classList.remove('open-state');
-
                     statusBadge.innerText = "🔒 CERRADO";
                     statusBadge.classList.add('closed');
-                    statusBadge.classList.remove('open');
-
-                    btnText.innerText = "No disponible ahora";
+                    btnText.innerText = "Cerrado";
                 }
             });
-
-            // Scroll automático suave al primer plato abierto
-            if (firstOpenCard) {
-                setTimeout(() => {
-                   firstOpenCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                }, 500);
-            }
         }
 
-        // 3. Interacción "Me Gusta"
         function toggleLove(btn) {
             btn.classList.toggle('loved');
             const icon = btn.querySelector('i');
-            
             if(btn.classList.contains('loved')) {
                 icon.classList.remove('far'); icon.classList.add('fas');
-                confetti({
-                    particleCount: 15, spread: 40, colors: ['#e31b23', '#ffafb3'],
-                    origin: { y: btn.getBoundingClientRect().top / window.innerHeight, x: btn.getBoundingClientRect().left / window.innerWidth }
-                });
-            } else {
-                icon.classList.remove('fas'); icon.classList.add('far');
-            }
+                confetti({ particleCount: 15, spread: 40, colors: ['#e31b23', '#ffafb3'], origin: { y: btn.getBoundingClientRect().top / window.innerHeight, x: btn.getBoundingClientRect().left / window.innerWidth } });
+            } else { icon.classList.remove('fas'); icon.classList.add('far'); }
         }
 
-        // 4. Lightbox
-        function openLightbox(src) {
-            document.getElementById('lightbox-img').src = src;
-            document.getElementById('lightbox').classList.add('active');
-        }
-        function closeLightbox() {
-            document.getElementById('lightbox').classList.remove('active');
-        }
+        function openLightbox(src) { document.getElementById('lightbox-img').src = src; document.getElementById('lightbox').classList.add('active'); }
+        function closeLightbox() { document.getElementById('lightbox').classList.remove('active'); }
 
-        // 5. Ordenar con Confeti
         function order(type, msg) {
             confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 }, colors: ['#25D366', '#d4af37', '#ffffff'] });
-            setTimeout(() => {
-                window.location.href = `https://wa.me/573223660175?text=${encodeURIComponent(msg)}`;
-            }, 800);
+            setTimeout(() => { window.location.href = `https://wa.me/573223660175?text=${encodeURIComponent(msg)}`; }, 800);
         }
     </script>
 </body>
